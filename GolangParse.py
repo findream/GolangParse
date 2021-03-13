@@ -5,6 +5,7 @@ import idaapi
 idaapi.require("pclntbl")
 idaapi.require("common")
 idaapi.require("moduledata")
+idaapi.require("type_builder")
 
 def main():
     breakpoint()
@@ -17,8 +18,12 @@ def main():
 
     # parse pclntable struct
     # pclntable address in first_moduledata
-    pclntable = pclntbl.Pclntbl(first_moduledata.pclntbl_addr,first_moduledata.srcfile_tbl_addr)
+    pclntable = pclntbl.Pclntbl(first_moduledata.pclntbl_addr,first_moduledata.filetab_addr)
     pclntable.parse()
+
+    #type
+    typeparse = type_builder.TypeParse(first_moduledata)
+    typeparse.build_all_types()
 
 if __name__ == '__main__':
     main()

@@ -29,6 +29,10 @@ def read_mem(addr,size):
 def _error(err_str):
     print('[ERROR] - %s' % err_str)
 
+# info
+def _info(info_str):
+    print(info_str)
+
 
 STRIP_CHARS = [ '(', ')', '[', ']', '{', '}', ' ', '"' ]
 REPLACE_CHARS = ['.', '*', '-', ',', ';', ':', '/', '\xb7' ]

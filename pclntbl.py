@@ -19,6 +19,7 @@ class Pclntbl():
         self.srcfiles = list()
     
     def parse_hdr(self):
+        common._info("-----------------------parse pclntab header start-----------------------")
         # Determine whether it is a valid Magic Word
         if common.read_mem(self.start_addr,4) != Pclntbl.MAGIC:
             common._error("Invalid pclntbl header magic number!")
@@ -40,10 +41,12 @@ class Pclntbl():
         self.ptr_sz = common.read_mem(self.start_addr+7,1) 
         idc.MakeByte(self.start_addr+7)
         idc.MakeComm(self.start_addr+7,"size of uintptr")
+        common._info("-----------------------parse pclntab header end-----------------------")
 
 
 
     def parse_func(self):
+        common._info("-----------------------parse func start-----------------------")
         # func_num
         self.func_num = common.read_mem(self.start_addr+8,4) 
         idc.MakeDword(self.start_addr+8)
@@ -69,12 +72,14 @@ class Pclntbl():
             func_struct_addr = self.start_addr + func_name_offset
             funcstruct = FuncStruct(func_struct_addr,self)
             funcstruct.parse()
+        common._info("-----------------------parse func end-----------------------")
     
     def parse_src(self):
-        if self.srcfile_tbl_addr != self.start_addr + common.read_mem(self.func_tbl_addr + self.func_tbl_sz + self.ptr_sz):
+        common._info("-----------------------parse srcfile start-----------------------")
+        if self.srcfile_tbl_addr != self.start_addr + common.read_mem(self.func_tbl_addr + self.func_tbl_sz + self.ptr_sz,4):
             common._error("scrfile table address is error")
         
-        srcfile_tbl_addr = self.srcfile_tbl_addr
+        srcfile_tbl_addr = self.srcfile_tbl_addr 
         # srcfile_tbl_offset
         idc.MakeComm(self.func_tbl_addr + self.func_tbl_sz + self.ptr_sz,"Source file table addr:0x%x" % self.srcfile_tbl_addr)
 
@@ -86,13 +91,23 @@ class Pclntbl():
         idc.MakeComm(srcfile_tbl_addr,"scrfile_num")
 
         # traverse all srcfile 
-        curr_addr = srcfile_tbl_addr + self.ptr_sz
-        for src_id in range():
-            curr_addr = curr_addr + src_id * self.ptr_sz
+        start_addr = srcfile_tbl_addr + self.ptr_sz
+        for src_id in range(self.srcfile_num):
+            curr_addr = start_addr + src_id * self.ptr_sz
             srcfile_offset = common.read_mem(curr_addr,4)
             srcfile_addr = self.start_addr + srcfile_offset
             idc.MakeDword(curr_addr)
-            idc.MakeComm(curr_addr,"srcfile_addr:0x%x" % srcfile_addr)
+            #idc.MakeComm(curr_addr,"srcfile_addr:0x%x" % srcfile_addr)
+
+            # srcfile path
+            srcfile_path = idc.GetString(srcfile_addr).decode("ascii","replace")
+            if not srcfile_path:
+                common._error("Failed to parse 0x%x scrfile"%srcfile_addr)
+                continue
+            idc.MakeStr(srcfile_addr,srcfile_addr + len(srcfile_path)+1)
+            idaapi.add_dref(curr_addr,srcfile_addr,idaapi.dr_O)
+        common._info("-----------------------parse srcfile end-----------------------")
+
 
 
 
@@ -103,6 +118,7 @@ class Pclntbl():
     def parse(self):
         self.parse_hdr()
         self.parse_func()
+        self.parse_src()
 
 
 '''
