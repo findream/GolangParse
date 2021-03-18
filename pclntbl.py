@@ -19,7 +19,7 @@ class Pclntbl():
         self.srcfiles = list()
     
     def parse_hdr(self):
-        common._info("-----------------------parse pclntab header start-----------------------")
+        common._info("\t\t\t  parse pclntab header start\t\t\t  ")
         # Determine whether it is a valid Magic Word
         if common.read_mem(self.start_addr,4) != Pclntbl.MAGIC:
             common._error("Invalid pclntbl header magic number!")
@@ -41,12 +41,12 @@ class Pclntbl():
         self.ptr_sz = common.read_mem(self.start_addr+7,1) 
         idc.MakeByte(self.start_addr+7)
         idc.MakeComm(self.start_addr+7,"size of uintptr")
-        common._info("-----------------------parse pclntab header end-----------------------")
+        common._info("\t\t\t  parse pclntab header end\t\t\t  ")
 
 
 
     def parse_func(self):
-        common._info("-----------------------parse func start-----------------------")
+        common._info("\t\t\t  parse func start\t\t\t  ")
         # func_num
         self.func_num = common.read_mem(self.start_addr+8,4) 
         idc.MakeDword(self.start_addr+8)
@@ -72,10 +72,12 @@ class Pclntbl():
             func_struct_addr = self.start_addr + func_name_offset
             funcstruct = FuncStruct(func_struct_addr,self)
             funcstruct.parse()
-        common._info("-----------------------parse func end-----------------------")
+            common._info("\t\t\t parse func:%s finished " % funcstruct.name)
+            del funcstruct
+        common._info("\t\t\t  parse func end\t\t\t  ")
     
     def parse_src(self):
-        common._info("-----------------------parse srcfile start-----------------------")
+        common._info("\t\t\t  parse srcfile start\t\t\t  ")
         if self.srcfile_tbl_addr != self.start_addr + common.read_mem(self.func_tbl_addr + self.func_tbl_sz + self.ptr_sz,4):
             common._error("scrfile table address is error")
         
@@ -106,7 +108,7 @@ class Pclntbl():
                 continue
             idc.MakeStr(srcfile_addr,srcfile_addr + len(srcfile_path)+1)
             idaapi.add_dref(curr_addr,srcfile_addr,idaapi.dr_O)
-        common._info("-----------------------parse srcfile end-----------------------")
+        common._info("\t\t\t  parse srcfile end\t\t\t  ")
 
 
 
@@ -161,6 +163,8 @@ class FuncStruct():
             self.name = common.clean_function_name(funcname)
             #self.name = funcname
         
+        if len(self.name) > 100:
+            print(self.pclntbl.start_addr + name_offset)
         # func_args
         self.args = common.read_mem(self.addr + self.pclntbl.ptr_sz*2 , self.pclntbl.ptr_sz)
 
@@ -191,6 +195,7 @@ class FuncStruct():
         idc.MakeComm(self.addr + self.pclntbl.ptr_sz,"Func name offset(Addr @ 0x%x), name string: %s" % (self.pclntbl.start_addr + name_offset, self.name))
 
         # Make string of funcname 
+        idc.MakeUnknown(self.pclntbl.start_addr + name_offset,len(self.name)+1,idc.DOUNK_SIMPLE)
         if not idc.MakeStr(self.pclntbl.start_addr + name_offset, self.pclntbl.start_addr + name_offset + len(self.name)+1):
             common._error("Make func_name_str [%s] failed @0x%x" % (self.name, self.pclntbl.start_addr + name_offset))
 

@@ -27,7 +27,7 @@ def read_mem(addr,size):
 
 # error
 def _error(err_str):
-    print('[ERROR] - %s' % err_str)
+    print('\t\t\t  [ERROR] - %s' % err_str)
 
 # info
 def _info(info_str):
@@ -42,11 +42,23 @@ def clean_function_name(name_str):
     Clean generic 'bad' characters
     '''
     #name_str = filter(lambda x: x in string.printable, name_str)
+    name_str = name_str.decode("ascii","replace").split(' ',1)[0]
 
     for c in STRIP_CHARS:
-        name_str = name_str.decode("ascii","replace").replace(c, '').encode("utf-8","ignore")
+        name_str = name_str.replace(c, '')
         
 
     for c in REPLACE_CHARS:
-        name_str = name_str.decode("ascii","replace").replace(c, '_').encode("utf-8","ignore")
-    return name_str.decode("ascii","replace")
+        name_str = name_str.replace(c, '_')
+    return name_str
+
+# get text segment
+def get_text_seg():
+    return get_seg([".text","__text"])
+
+def get_seg(seg_name_list):
+    for seg_name in seg_name_list:
+        seg = idaapi.get_segm_by_name(seg_name)
+        if seg:
+            return seg
+    return

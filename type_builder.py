@@ -7,9 +7,10 @@ idaapi.require("common")
 class TypeParse():
     def __init__(self,first_moduledata):
         self.first_moduledata = first_moduledata
+        self.stringtype_addr = 0
 
     def build_all_types(self):
-        common._info("-----------------------build_all_types start-----------------------")
+        common._info("\t\t\t  build_all_types start\t\t\t  ")
         typelink_addr = self.first_moduledata.typelink_addr
         type_num = self.first_moduledata.type_num
         for type_id in range(type_num):
@@ -19,7 +20,7 @@ class TypeParse():
             idc.MakeDword(curr_addr)
             idc.MakeComm(curr_addr,"type @ 0x%x" % eachtype_addr)
             self.parse_type(eachtype_addr)
-        common._info("-----------------------build_all_types end-----------------------")
+        common._info("\t\t\t  build_all_types end\t\t\t  ")
 
 
     def parse_type(self,eachtype_addr):
@@ -30,12 +31,17 @@ class TypeParse():
         if RType.TYPE_KINDS[rtype.kind & RType.KIND_MASK] == "Ptr":
             ptrtype = PtrType(rtype.addr+0x20,rtype)
             ptrtype.parse()
-
+            if ptrtype.stringtype_addr != 0:
+                self.stringtype_addr = ptrtype.stringtype_addr
+                
         
         # Struct Type
         if RType.TYPE_KINDS[rtype.kind & RType.KIND_MASK] == "Struct":
             structtype = StructType(rtype)
             structtype.parse()
+
+        
+
 
 
 '''
@@ -78,6 +84,7 @@ class RType():
         self.name_addr = idc.BADADDR
         self.ptrtothis = None
         self.Name = None
+        self.stringtype_addr = 0
 
     def parse(self):
         # rtype.size
@@ -118,8 +125,7 @@ class RType():
         # rtype.kind
         self.kind = common.read_mem(self.addr+4*3+3, 1)
         idc.MakeComm(self.addr + 4*3+3, "rtype.kind:" + RType.TYPE_KINDS[self.kind & RType.KIND_MASK])
-
-
+        
         # rtype.alg
         self.alg = common.read_mem(self.addr+4*4, 4)
         idc.MakeDword(self.addr + 4*4)
@@ -144,6 +150,11 @@ class RType():
 
         # Get Name Class
         self.Name = name
+
+        # get string type
+        if name.name_str == "*string" and RType.TYPE_KINDS[self.kind & RType.KIND_MASK] =="String":
+            self.stringtype_addr = self.addr
+
 
 
             
@@ -213,13 +224,16 @@ class PtrType():
     def __init__(self,ptr_addr,rtype):
         self.ptr_addr = ptr_addr
         self.rtype = rtype
+        self.stringtype_addr = 0
     
     def parse(self):
-        common._info("-----------------------Ptr:%s start-----------------------" % self.rtype.Name.name_str)
+        common._info("\t\t\t  Ptr:%s start\t\t\t  " % self.rtype.Name.name_str)
         ptrtype_addr = common.read_mem(self.ptr_addr,4)
         type_ptr = RType(ptrtype_addr,self.rtype.type_parser)
         type_ptr.parse()
-        common._info("-----------------------Ptr:%s end-----------------------" % self.rtype.Name.name_str)
+        if type_ptr.stringtype_addr !=0:
+            self.stringtype_addr = type_ptr.stringtype_addr
+        common._info("\t\t\t  Ptr:%s end\t\t\t  " % self.rtype.Name.name_str)
 
 
 class StructType():
@@ -241,13 +255,13 @@ class StructType():
 
 
     def parse(self):
-        common._info("-----------------------Struct:%s start-----------------------" % self.rtype.Name.name_str)
+        common._info("\t\t\t  Struct:%s start\t\t\t  " % self.rtype.Name.name_str)
         self.parse_pkgpath()
         idc.MakeComm(self.rtype_pkgpath_addr,"rtype.pkgpath @0x%x" % self.pkgpath_addr)
 
         self.parse_fields()
         idc.MakeComm(self.rtype_structField_addr,"rtype.structField @0x%x" % self.structField_addr)
-        common._info("-----------------------Struct:%s end-----------------------" % self.rtype.Name.name_str)
+        common._info("\t\t\t  Struct:%s end\t\t\t  " % self.rtype.Name.name_str)
     
     def parse_pkgpath(self):
         # pkgpath
@@ -263,8 +277,12 @@ class StructType():
         length = common.read_mem(self.pkgpath_addr + 2, 1)
         idc.MakeComm(self.pkgpath_addr+2, "pkgpath.length 0x%x" % length)
 
-        # pkgpath         
-        self.pkgpath = idc.GetManyBytes(self.pkgpath_addr + 3, length).decode("ascii","replace")
+        # pkgpath
+        try:         
+            self.pkgpath = idc.GetManyBytes(self.pkgpath_addr + 3, length).decode("ascii","replace")
+        except AttributeError:
+            common._error("pkgpath parse failed  at pkgpath_addr:@0x%x" % (self.pkgpath_addr + 3))
+            return
         if len(self.pkgpath) > 0:
             idc.MakeStr(self.pkgpath_addr + 3 + 3,self.pkgpath_addr + 3 + length + 3)
 
@@ -322,7 +340,11 @@ class ParseString():
 
     def getvalue(self):
         self.value_addr = self.string_addr + 3
-        self.string_value = idc.GetManyBytes(self.value_addr,self.string_length).decode("ascii","replace")
+        try:
+            self.string_value = idc.GetManyBytes(self.value_addr,self.string_length).decode("ascii","replace")
+        except AttributeError:
+            common._error("string_value parse failed  at pkgpath_addr:@0x%x" % self.value_addr)
+            return
         if len(self.string_value) > 0:
             idc.MakeStr(self.value_addr, self.value_addr + self.string_length)
         
