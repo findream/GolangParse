@@ -11,7 +11,7 @@ version：GolangParse V1.1
 
 operating platform：IDA 7.5 Python 3.8
 
-target golang version：go 1.15
+target golang version：go 1.15 x86 PE
 
 reference：
     https://github.com/0xjiayu/go_parser
@@ -57,6 +57,7 @@ def main():
 
     common._info("\t\t\t  ----->finish")
     common._info("\t\t\t  ----->pclntbl finish")
+    common._info("\t\t\t  ----->pclntbl addr:0x%x" % first_moduledata.pclntbl_addr)
     common._info("\t\t\t  ----->function finish")
     common._info("\t\t\t  ----->srcfile finish")
     common._info("\t\t\t  ----->type finish")
