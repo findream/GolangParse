@@ -3,7 +3,17 @@ import idc
 import idautils
 import idaapi
 
-ADDR_SZ = 4
+
+if idaapi.get_inf_structure().is_32bit():
+    ADDR_SZ = 4
+if idaapi.get_inf_structure().is_64bit():
+    ADDR_SZ = 8
+
+def get_allsegs():
+    allsegs = []
+    for seg in idautils.Segments(): 
+        allsegs.append(idc.SegName(seg))
+    return allsegs
 # get seg struct by seg_names
 def get_seg(seg_names):
     seg = None
@@ -12,7 +22,6 @@ def get_seg(seg_names):
         if seg:
             return seg
     return seg
-
 
 # read memory 
 def read_mem(addr,size):
@@ -62,3 +71,6 @@ def get_seg(seg_name_list):
         if seg:
             return seg
     return
+
+
+        

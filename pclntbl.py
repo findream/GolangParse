@@ -48,7 +48,8 @@ class Pclntbl():
     def parse_func(self):
         common._info("\t\t\t  parse func start\t\t\t  ")
         # func_num
-        self.func_num = common.read_mem(self.start_addr+8,4) 
+        #self.func_num = common.read_mem(self.start_addr+8,4) 
+        self.func_num = common.read_mem(self.start_addr+8,self.ptr_sz) 
         idc.MakeDword(self.start_addr+8)
         idc.MakeComm(self.start_addr+8,"Number of Functions")
         idc.MakeNameEx(self.start_addr+8,"func_tbl_entry",flags=idaapi.SN_FORCE)
@@ -68,7 +69,8 @@ class Pclntbl():
         # func_name_offset = func_tbl_addr + 2 * self.ptr_sz * func_id
         for func_id in range(self.func_num):
             func_name_addr = self.func_tbl_addr + self.ptr_sz * func_id * 2
-            func_name_offset = common.read_mem(func_name_addr + self.ptr_sz,4)
+            #func_name_offset = common.read_mem(func_name_addr + self.ptr_sz,4)
+            func_name_offset = common.read_mem(func_name_addr + self.ptr_sz,self.ptr_sz)
             func_struct_addr = self.start_addr + func_name_offset
             funcstruct = FuncStruct(func_struct_addr,self)
             funcstruct.parse()
@@ -154,10 +156,12 @@ class FuncStruct():
     
     def parse(self):
         # func_addr
-        self.entry = common.read_mem(self.addr,4)
+        # self.entry = common.read_mem(self.addr,4)
+        self.entry = common.read_mem(self.addr,self.pclntbl.ptr_sz)
         
         # func_name
-        name_offset = common.read_mem(self.addr + self.pclntbl.ptr_sz , self.pclntbl.ptr_sz)
+        #name_offset = common.read_mem(self.addr + self.pclntbl.ptr_sz , self.pclntbl.ptr_sz)
+        name_offset = common.read_mem(self.addr + self.pclntbl.ptr_sz , 4)
         funcname = idc.GetString(self.pclntbl.start_addr + name_offset)
         if funcname:
             self.name = common.clean_function_name(funcname)

@@ -100,58 +100,58 @@ class ModuleData():
     # Use default parameters is_test = False means this is a normal parsing process, not to judge whether first_moduledata_addr is correct
     def parse(self,is_test = False):
         self.start_addr = self.start_addr
-        self.pclntbl_addr = read_mem(self.start_addr , 4)
-        self.pclntbl_sz = read_mem(self.start_addr + ADDR_SZ , 4)
-        self.pclntbl_cap = read_mem(self.start_addr + 2*ADDR_SZ , 4)
-        self.ftab_addr = read_mem(self.start_addr + 3*ADDR_SZ , 4)
-        self.func_num = read_mem(self.start_addr + 4*ADDR_SZ , 4)
-        self.ftab_cap = read_mem(self.start_addr + 5*ADDR_SZ , 4)
-        self.filetab_addr = read_mem(self.start_addr + 6*ADDR_SZ , 4)
-        self.srcfile_num = read_mem(self.start_addr + 7*ADDR_SZ , 4)
-        self.srcfile_tab_cap = read_mem(self.start_addr + 8*ADDR_SZ , 4)
-        self.findfunctab = read_mem(self.start_addr + 9*ADDR_SZ , 4)
-        self.min_pc = read_mem(self.start_addr + 10*ADDR_SZ , 4)
-        self.max_pc = read_mem(self.start_addr + 11*ADDR_SZ , 4)
-        self.text_addr = read_mem(self.start_addr + 12*ADDR_SZ , 4)
-        self.etext_addr = read_mem(self.start_addr + 13*ADDR_SZ , 4)
+        self.pclntbl_addr = read_mem(self.start_addr , ADDR_SZ)
+        self.pclntbl_sz = read_mem(self.start_addr + ADDR_SZ , ADDR_SZ)
+        self.pclntbl_cap = read_mem(self.start_addr + 2*ADDR_SZ , ADDR_SZ)
+        self.ftab_addr = read_mem(self.start_addr + 3*ADDR_SZ , ADDR_SZ)
+        self.func_num = read_mem(self.start_addr + 4*ADDR_SZ , ADDR_SZ)
+        self.ftab_cap = read_mem(self.start_addr + 5*ADDR_SZ , ADDR_SZ)
+        self.filetab_addr = read_mem(self.start_addr + 6*ADDR_SZ , ADDR_SZ)
+        self.srcfile_num = read_mem(self.start_addr + 7*ADDR_SZ , ADDR_SZ)
+        self.srcfile_tab_cap = read_mem(self.start_addr + 8*ADDR_SZ , ADDR_SZ)
+        self.findfunctab = read_mem(self.start_addr + 9*ADDR_SZ , ADDR_SZ)
+        self.min_pc = read_mem(self.start_addr + 10*ADDR_SZ , ADDR_SZ)
+        self.max_pc = read_mem(self.start_addr + 11*ADDR_SZ , ADDR_SZ)
+        self.text_addr = read_mem(self.start_addr + 12*ADDR_SZ , ADDR_SZ)
+        self.etext_addr = read_mem(self.start_addr + 13*ADDR_SZ , ADDR_SZ)
         if is_test:
             return 
-        self.noptrdata_addr = read_mem(self.start_addr + 14*ADDR_SZ , 4)
-        self.enoptrdata_addr = read_mem(self.start_addr + 15*ADDR_SZ , 4)
-        self.data_addr = read_mem(self.start_addr + 16*ADDR_SZ , 4)
-        self.edata_addr = read_mem(self.start_addr + 17*ADDR_SZ , 4)
-        self.bss_addr = read_mem(self.start_addr + 18*ADDR_SZ , 4)
-        self.ebss_addr = read_mem(self.start_addr + 19*ADDR_SZ , 4)
-        self.noptrbss_addr = read_mem(self.start_addr + 20*ADDR_SZ , 4)
-        self.enoptrbss_addr = read_mem(self.start_addr + 21*ADDR_SZ , 4)
-        self.end_addr = read_mem(self.start_addr + 22*ADDR_SZ , 4)
-        self.gcdata_addr = read_mem(self.start_addr + 23*ADDR_SZ , 4)
-        self.gcbss_addr = read_mem(self.start_addr + 24*ADDR_SZ , 4)
-        self.types_addr = read_mem(self.start_addr + 25*ADDR_SZ , 4)
-        self.etypes_addr = read_mem(self.start_addr + 26*ADDR_SZ , 4)
-        self.textsecmap_addr = read_mem(self.start_addr + 27*ADDR_SZ , 4)
-        self.textsecmap_len = read_mem(self.start_addr + 28*ADDR_SZ , 4)
-        self.textsecmap_cap = read_mem(self.start_addr + 29*ADDR_SZ , 4)
-        self.typelink_addr = read_mem(self.start_addr + 30*ADDR_SZ , 4)
-        self.type_num = read_mem(self.start_addr + 31*ADDR_SZ , 4)
-        self.type_cap = read_mem(self.start_addr + 32*ADDR_SZ , 4)
-        self.itablink_addr = read_mem(self.start_addr + 33*ADDR_SZ , 4)
-        self.itab_num = read_mem(self.start_addr + 34*ADDR_SZ , 4)
-        self.itab_cap = read_mem(self.start_addr + 35*ADDR_SZ , 4)
-        self.ptab_addr = read_mem(self.start_addr + 36*ADDR_SZ , 4)
-        self.ptab_num = read_mem(self.start_addr + 37*ADDR_SZ , 4)
-        self.ptab_cap = read_mem(self.start_addr + 38*ADDR_SZ , 4)
+        self.noptrdata_addr = read_mem(self.start_addr + 14*ADDR_SZ , ADDR_SZ)
+        self.enoptrdata_addr = read_mem(self.start_addr + 15*ADDR_SZ , ADDR_SZ)
+        self.data_addr = read_mem(self.start_addr + 16*ADDR_SZ , ADDR_SZ)
+        self.edata_addr = read_mem(self.start_addr + 17*ADDR_SZ , ADDR_SZ)
+        self.bss_addr = read_mem(self.start_addr + 18*ADDR_SZ , ADDR_SZ)
+        self.ebss_addr = read_mem(self.start_addr + 19*ADDR_SZ , ADDR_SZ)
+        self.noptrbss_addr = read_mem(self.start_addr + 20*ADDR_SZ , ADDR_SZ)
+        self.enoptrbss_addr = read_mem(self.start_addr + 21*ADDR_SZ , ADDR_SZ)
+        self.end_addr = read_mem(self.start_addr + 22*ADDR_SZ , ADDR_SZ)
+        self.gcdata_addr = read_mem(self.start_addr + 23*ADDR_SZ , ADDR_SZ)
+        self.gcbss_addr = read_mem(self.start_addr + 24*ADDR_SZ , ADDR_SZ)
+        self.types_addr = read_mem(self.start_addr + 25*ADDR_SZ , ADDR_SZ)
+        self.etypes_addr = read_mem(self.start_addr + 26*ADDR_SZ , ADDR_SZ)
+        self.textsecmap_addr = read_mem(self.start_addr + 27*ADDR_SZ , ADDR_SZ)
+        self.textsecmap_len = read_mem(self.start_addr + 28*ADDR_SZ , ADDR_SZ)
+        self.textsecmap_cap = read_mem(self.start_addr + 29*ADDR_SZ , ADDR_SZ)
+        self.typelink_addr = read_mem(self.start_addr + 30*ADDR_SZ , ADDR_SZ)
+        self.type_num = read_mem(self.start_addr + 31*ADDR_SZ , ADDR_SZ)
+        self.type_cap = read_mem(self.start_addr + 32*ADDR_SZ , ADDR_SZ)
+        self.itablink_addr = read_mem(self.start_addr + 33*ADDR_SZ , ADDR_SZ)
+        self.itab_num = read_mem(self.start_addr + 34*ADDR_SZ , ADDR_SZ)
+        self.itab_cap = read_mem(self.start_addr + 35*ADDR_SZ , ADDR_SZ)
+        self.ptab_addr = read_mem(self.start_addr + 36*ADDR_SZ , ADDR_SZ)
+        self.ptab_num = read_mem(self.start_addr + 37*ADDR_SZ , ADDR_SZ)
+        self.ptab_cap = read_mem(self.start_addr + 38*ADDR_SZ , ADDR_SZ)
 
-        pluginpath_addr = read_mem(self.start_addr + 39*ADDR_SZ , 4)
-        pluginpath_len = read_mem(self.start_addr + 40*ADDR_SZ , 4)
+        pluginpath_addr = read_mem(self.start_addr + 39*ADDR_SZ , ADDR_SZ)
+        pluginpath_len = read_mem(self.start_addr + 40*ADDR_SZ , ADDR_SZ)
         self.pluginpath = str(idc.GetManyBytes(pluginpath_addr, pluginpath_len))
 
-        modulename_addr = read_mem(self.start_addr+44*ADDR_SZ , 4)
-        modulename_len = read_mem(self.start_addr+45*ADDR_SZ , 4)
+        modulename_addr = read_mem(self.start_addr+44*ADDR_SZ , ADDR_SZ)
+        modulename_len = read_mem(self.start_addr+45*ADDR_SZ , ADDR_SZ)
         self.modulename = str(idc.GetManyBytes(modulename_addr, modulename_len))
 
-        self.hasmain = read_mem(self.start_addr+49*ADDR_SZ , 4)
-        self.next = read_mem(self.start_addr+54*ADDR_SZ + 1, 4)
+        self.hasmain = read_mem(self.start_addr+49*ADDR_SZ , ADDR_SZ)
+        self.next = read_mem(self.start_addr+54*ADDR_SZ + 1, ADDR_SZ)
 
         # write first_module_data to IDA database file
         if not is_test:
@@ -240,11 +240,20 @@ def get_first_moduledata_addr():
 
     # Because firstmoduledata is in the data section, you first need to locate the first address of the data section
     mdata_seg_addr = get_mdata_seg_addr()
+
+    # linux
+    allsegs = []
+    for seg in idautils.Segments(): 
+        allsegs.append(idc.SegName(seg))
+    if ".noptrdata" in allsegs:
+        mdata_seg_addr = common.get_seg([".noptrdata"]).start_ea
+
     
     # Traverse the data segment to search for the signature code 0xFFFFFFFB
     curr_addr = mdata_seg_addr
     while curr_addr < idc.BADADDR:
         if idc.get_qword(read_mem(curr_addr,4))&0xFFFFFFFF == 0xFFFFFFFB:
+            breakpoint()
             if is_firstmoduledata(curr_addr):
                 first_moduledata_addr = curr_addr
                 return first_moduledata_addr
